@@ -1,1 +1,2 @@
 # learn-java-unittest
+このリポジトリはkanayo1993がJavaのUnitテストコードを学習するために作られました。
