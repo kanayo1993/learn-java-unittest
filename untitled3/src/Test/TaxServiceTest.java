@@ -64,6 +64,38 @@ public class TaxServiceTest {
                 () -> service.markAsPaid(3));
     }
 
+    @Test
+    void testProcessOverdueTrue(){
+        TaxRecord rec = new TaxRecord(4, "TAXPAYER04", LocalDate.now().minusDays(4), 4000);
+        when(repo.findById(4)).thenReturn(Optional.of(rec));
+        boolean result = service.processOverdue(4, "test@test.com");
+        assertTrue(result);
+    }
 
+    @Test
+    void testProcessOverduePaidFalse(){
+        TaxRecord rec = new TaxRecord(5, "TAXPAYER05", LocalDate.now().minusDays(5), 5000);
+        rec.markPaid();
+        when(repo.findById(5)).thenReturn(Optional.of(rec));
+        boolean result = service.processOverdue(5, "test@test.com");
+        assertFalse(result);
+    }
+
+    @Test
+    void testProcessOverdueNotYet(){
+        TaxRecord rec = new TaxRecord(6, "TAXPAYER06", LocalDate.now(), 6000);
+        when(repo.findById(6)).thenReturn(Optional.of(rec));
+        boolean result = service.processOverdue(6, "aaa@aaa.com");
+        assertFalse(result);
+    }
+
+    @Test
+    void testProcessOverdueException() throws NotificationException {
+        TaxRecord rec = new TaxRecord(7, "TAXPAYER07", LocalDate.now().minusDays(7), 7000);
+        when(repo.findById(7)).thenReturn(Optional.of(rec));
+        doThrow(new NotificationException("Test Exception")).when(notifier).sendOverdueNotice(7,"test7@test7.com");
+        boolean result = service.processOverdue(7,"test7@test7.com");
+        assertFalse(result);
+    }
 
 }
