@@ -25,4 +25,22 @@ public class test {
                 .contains("foo", "bar", "baz")
                 .allMatch(s -> !s.isEmpty());
     }
+
+    @Test
+    void testSqrtApproximation(){
+        double actual = Calculator.sqrt(2.0);
+        assertThat(actual)
+                .as("√2は約1.4142")
+                .isCloseTo(1.4142, within(0.0001));
+    }
+
+    @Test
+    void testParsePositiveIntError(){
+        assertThatThrownBy(() -> ListUtils.parsePositiveInt("-5"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("positive");
+        assertThatThrownBy(() -> ListUtils.parsePositiveInt("あいうえお"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("numeric");
+    }
 }
